@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using NetOffice.WordApi;
+using NetOffice.WordApi.Enums;
 
 namespace WordFormat
 {
@@ -9,6 +12,55 @@ namespace WordFormat
     {
         static void Main(string[] args)
         {
+            string strFolder = null;
+            Console.WriteLine("输入文件夹路径开始任务:");
+            while (true)
+            {
+                strFolder = Console.ReadLine();
+                if (Directory.Exists(strFolder))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("文件夹不存在，请重新输入:");
+                }
+            }
+
+            string[] strsFiles = Directory.GetFiles(strFolder, "*.doc", SearchOption.AllDirectories);
+            Application app = GetApplication();
+            foreach (string file in strsFiles)
+            {
+                FormatFile(file, app);
+            }
+        }
+
+        private static void FormatFile(string strFile, Application app)
+        {
+            Document doc = app.Documents.Open(strFile);
+            app.Selection.WholeStory();
+            app.Selection.Font.Size = 10;
+            app.Selection.Font.Name = "微软雅黑";
+
+            app.Selection.GoTo(WdGoToItem.wdGoToLine, WdGoToDirection.wdGoToFirst);
+            app.Selection.EndKey(WdUnits.wdLine, WdMovementType.wdExtend);
+            app.Selection.Font.Size = 18;
+            app.Selection.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            app.Selection.ParagraphFormat.LineUnitBefore = 0.5f;
+            app.Selection.ParagraphFormat.LineUnitAfter = 0.5f;
+
+            doc.Save();
+            doc.Close();
+        }
+
+        private static Application GetApplication()
+        {
+            Application app = Application.GetActiveInstance();
+            if (app == null)
+            {
+                app = new Application();
+            }
+            return app;
         }
     }
 }
