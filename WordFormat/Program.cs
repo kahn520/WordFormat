@@ -31,8 +31,19 @@ namespace WordFormat
             Application app = GetApplication();
             foreach (string file in strsFiles)
             {
-                FormatFile(file, app);
+                try
+                {
+                    FormatFile(file, app);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                
+                Console.WriteLine(file);
             }
+            Console.WriteLine("全部完成");
+            Console.ReadKey();
         }
 
         private static void FormatFile(string strFile, Application app)
