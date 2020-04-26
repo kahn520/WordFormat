@@ -27,7 +27,7 @@ namespace WordFormat
                 }
             }
 
-            string[] strsFiles = Directory.GetFiles(strFolder, "*.doc", SearchOption.AllDirectories);
+            string[] strsFiles = Directory.GetFiles(strFolder, "*.doc", SearchOption.AllDirectories).Where(f => !f.Contains("~$")).ToArray();
             Application app = GetApplication();
             foreach (string file in strsFiles)
             {
@@ -54,8 +54,12 @@ namespace WordFormat
             app.Selection.Font.Name = "微软雅黑";
 
             app.Selection.GoTo(WdGoToItem.wdGoToLine, WdGoToDirection.wdGoToFirst);
-            app.Selection.EndKey(WdUnits.wdLine, WdMovementType.wdExtend);
-            app.Selection.Font.Size = 18;
+            app.Selection.MoveEndUntil("\v");
+            if (app.Selection.Characters.Count == 1)
+            {
+                app.Selection.MoveEndUntil("\r");
+            }
+            app.Selection.Font.Size = 20;
             app.Selection.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
             app.Selection.ParagraphFormat.LineUnitBefore = 0.5f;
             app.Selection.ParagraphFormat.LineUnitAfter = 0.5f;
