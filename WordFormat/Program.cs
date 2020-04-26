@@ -27,7 +27,7 @@ namespace WordFormat
                 }
             }
 
-            string[] strsFiles = Directory.GetFiles(strFolder, "*.doc", SearchOption.AllDirectories).Where(f => !f.Contains("~$")).ToArray();
+            string[] strsFiles = Directory.GetFiles(strFolder, "*.*", SearchOption.AllDirectories).Where(f => !f.Contains("~$") && f.Contains(".doc")).ToArray();
             Application app = GetApplication();
             foreach (string file in strsFiles)
             {
